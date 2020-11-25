@@ -611,10 +611,117 @@ It is worth mentioning that the Brier Score is an accuracy metric suitable for m
 
 ### II. Modeling 
 
-### 1. Mean of the target variable (baseline)
-We use the mean of the target variable as a comparative baseline since it is the simplest form to estimate values. We got the following results:
+In this project, we trained 9 classifiers with the training and validation datasets. We got the following results:
 
-![](img/avg.png)
+![](img/modeling.PNG)
+
+From the table, the CatBoost Classifier, XGB Classifier, and LGBM Classifier are the three best performers in terms of F1-Score - which is the metric we are using as the primary criteria for choosing the best model to our project.
+
+Before we proceed, let's explore each classifier and understand their mechanisms.
+
+### 1. Random Guess (baseline)
+The first model is a baseline. We randomly choose predicted values and compared with the actual values. This is supposedly the worst model performer from our set of chosen models; therefore, if a particular model performs worse than the baseline, we would not use it as the chosen one.
+
+
+### 2. Logistic Regression
+
+When the target variable is of binary type (yes/no, positive/negative) and there is a linear relationship between independent variables and the target, a logistic regression model can be used to predict probabilties of an observation belonging from a certain label.
+
+While a [linear regression](https://github.com/alanmaehara/Sales-Prediction#2-linear-regression) model tries to fit a best line by using the Ordinary Least Squares (OLS) method, a logistic regression uses a technique called Maximum Likelihood Estimator (MLE). The reason is that, for dependent variables which allows for only two answers, and for independent variables who are linearly related to the dependent variable, fitting a straight line won't be the best choice: a curved, usually called sigmoidal curve, would be ideal:
+
+![](img/logistic1.PNG)
+
+In the example plotted above, we assume that weight of patients are linear to the probability of having CVD. 
+
+If we define a probability threshold of .50, all patients who got a probability of having CVD above .50 will be labeled as having CVD (1), and zero otherwise. 
+
+At this point, one can guess why should logistic models be avoided if your data is not linearly related. Imagine if weight has nothing to do with a higher chance of getting CVD, and the dots in the plot were shifted randomly across the x-axis. Then the logistic model would hardly capture data patterns that would accurately predict probabiltiies of a patient having CVD.
+
+Linear regression models have some similar fundamentals to logistic regression ones. For instance, modeling a linear regression model is somewhat similar to a logistic regression: we have the coefficients for each independent variable, and we can calculate their values to check whether a specific variable explains better the phenomenon (dependent variable) than the others:
+
+**Formula for linear regression (with one independent variable X1):**
+
+$\large\hat{y} = \beta_{0} + \beta_{1}X_1$
+
+where the $\beta$'s are the coefficients, the $\hat{y}$ is the predicted value, and the $X_1$ is the value of an independent variable (eg: if weight, it could assume values from 34 to 180 kg according to our data).
+
+**Formula for logistic regression (with one independent variable X1):**
+
+$\large\hat{y} = \ln(\frac{p}{1-p}) = \beta_{0} + \beta_{1}X_1$
+
+Notice that there is a natural log term that represents the predicted value. **This is the natural log of the odds** (also called log-odds), in which _p_ is the probability of an individual having CVD and _1-p_ is the probability of not having CVD.
+
+Why the natural log is utilized here? Let's take a look on the odds first. As an example, let's say that from 10 individuals weighting 80 kg, 8 have CVD and 2 doesn't. The probability of a patient to have CVD is 0.8 and the probability of not having CVD is 0.2. Then the odds of having CVD are:
+
+$ odds\ of\ having\ CVD_1 = \large \frac{probability\ of\ having\ CVD_1}{probability\ of\ not\ having\ CVD_1} = \Large\frac{p}{1-p} = \frac{0.8}{0.2} = 4 $
+
+Then let's calculate the odds of having CVD for patients weighting 50kg: 2 have CVD and 8 doesn't:
+
+$ odds\ of\ having\ CVD_2 = \large \frac{probability\ of\ having\ CVD_2}{probability\ of\ not\ having\ CVD_2} = \Large\frac{p}{1-p} = \frac{0.2}{0.8} = 0.25 $
+
+As one can tell, when the numerator is smaller than the denominator, odds range from 0 to 1. However, when the numerator is bigger than the denominator, odds range from 1 to infinity. This is the reason why logarithms are utilized in the logistic regression; **it is a measure to standardize output values across all probability values:**
+
+$\large \ln(\frac{0.8}{0.2} )_1= 1.38$
+
+$\large \ln(\frac{0.2}{0.8} )_2= -1.38$
+
+With the natural log of the odds for these two specific cases on hands, we can figure out the probability of a patient with 50kg to have CVD and the probability of a patient with 80kg to have CVD. We do the following:
+
+- Exponentiate the log-odds:
+
+$\Large\ln(\frac{p}{1-p}) = \beta_{0} + \beta_{1}X_1$
+
+$\Large\frac{p}{1-p} = e^{\beta_{0} + \beta_{1}X_1}$
+
+- Do some algebra towards isolating p:
+
+$\large p = \displaystyle \frac{e^{\beta_{0} + \beta_{1}X_1}}{e^{\beta_{0} + \beta_{1}X_1}+ 1} = \displaystyle\frac{1}{1+e^{-(\beta_{0} + \beta_{1}X_1)}}$
+
+- We can translate the p as:
+
+$\large p = \displaystyle\frac{1}{1+e^{-\ln(\frac{p}{p-1})}}$
+
+If we plug the numbers we got earlier in the formula:
+
+$\large p_1 = \displaystyle\frac{1}{1+e^{-1.38}} = \frac{1}{1+0.25} = 0.80$
+
+$\large p_2 = \displaystyle\frac{1}{1+e^{1.38}} = \frac{1}{1+3.97} = 0.20$
+
+which tells us that the likelihood of a patient with 80kg having CVD is 80%, and the likelihood of a patient with 50kg having CVD is 20%. If we plot the probability predictions in the plot, we see that they are indeed part of a sigmoidal curve:
+
+![](img/logistic2.PNG)
+
+But how to tell that the curve is a good fit for the data? This is where Maximum Likelihood Estimation (MLE) comes into play. Suppose that we have calculated likelihoods (probabilities) for all kinds of patients in our dataset, and we have fitted a curve like the first one we saw here:
+
+![](img/logistic1.PNG)
+
+Now imagine that we got the following likelihoods of having CVD for patients with CVD (0.70, 0.80, 0.90, 0.95) and for patients without CVD (0.10, 0.20, 0.30, 0.40). Them we calculate the log-likelihood of the model:
+
+- Log-likelihood of having CVD:
+
+$\ln(0.70) + \ln(0.80) + \ln(0.90) + \ln(0.95) = (-0.35)+(-0.22)+(-0.10)+(-0.05) = -0.72$
+
+- Log-likelihood of not having CVD:
+
+$\ln(1 - 0.10) + \ln(1 - 0.20) + \ln(1 - 0.30) + \ln(1 - 0.40) = (-0,10)+(-0.22)+(-0.35)+(-0,51) = -1.18$
+
+- Summing up both log-likelihood: 
+
+$-0.72 - 1.18 = -1.90$
+
+With the current parameters, the logistic model has a log-likelihood of -1.90. Perhaps there are other parameters that could increase the log-likelihood value (the higher, the better), but this is a task that is efficiently done by any statistical software. 
+
+In practice, logistic models can take more than one independent variable, which makes the model even more complex than the one we depicted here. 
+
+Good additional sources on the subject for building intuition is [Brandon Foltz's](https://www.youtube.com/watch?v=zAULhNrnuL4) series on Logistic Regression, and [Josh Starmer's](https://www.youtube.com/watch?v=vN5cNN2-HWE) videos on the topic.
+
+### 3. K-Neighbors Classifier
+### 4. Naive Bayes
+### 5. Stochastic Gradient Descent (SGD) Classifier
+### 6. Random Forest Classifier
+### 7. Balanced Random Forest Classifier
+### 8. XGB Classifier
+### 9. CatBoost Classifier
 
 
 &nbsp;
