@@ -864,6 +864,101 @@ Additional sources to build intuition:
 - For Gaussian Naive Bayes, check [StatQuest by Josh Starmer](https://www.youtube.com/watch?v=H3EjCKtlVog);
 
 ### 5. Stochastic Gradient Descent (SGD) Classifier
+
+In optimization problems for Machine Learning, we are usually worried about reducing the error or increasing the accuracy of our predictions when compared to the observed values. [Linear Regression](https://github.com/alanmaehara/Sales-Prediction#2-linear-regression) models perhaps provide the clearest example of how we try to fit a line that reduces such error to the minimum value possible:
+
+![](img/mpe.png)
+_A linear regression line in blue with observed values in black, and errors in red. Graph retrieved from [STHDA](http://www.sthda.com/english/articles/40-regression-analysis/167-simple-linear-regression-in-r/)._
+
+In linear regression models, the best line is fit in a way that it minimizes the error through a loss function. For example, the residual sum of the squares is a loss function where the goal is to find parameter values that minimize the residual. For a single linear regression model, the parameters are the slope (m) and the intercept (b) of the function (recall linear functions like y = mx + b).
+
+Stochastic Gradient Descent also has the same goal of deriving slopes and intercepts towards reducing the discrepancy between the observed value and the predicted value given by the model. It does so by using a loss function like the linear regression model, but in a slightly different way and faster than the traditional Gradient Descent algorithm. Let's delve ourselves first in the fundamentals of the Gradient Descent, and later we find out its differences with the Stochastic Gradient Descent.
+
+To build intuition, let's say that we have three people we want to predict their heights, and we wish to do so by fitting the best prediction line possible. We will set this line by tentative, with a slope of 1 and an y-intercept of 0 (a 45º degree line):
+
+![](img/sgd.PNG)
+
+As one can tell, the model's prediction line is far from being optimal. The error are just too big. See the exact numbers in the table below:
+
+![](img/sgd1.PNG)
+
+But how can we reduce the errors? For Gradient Descent models, we set a loss function and work towards giving "small", gradient steps towards the optimal line's intercept and slope values.
+
+The loss function can be any; in this example, we use the residual sum of the squares:
+
+$\large L(y_i,f(x_i)) =  \displaystyle\sum_{i=1}^{3}(y_i - f(x_i))^2$
+
+where,
+
+$y_i = observed\ height$ 
+$f(x_i) = intercept + slope*weight = predicted\ height $
+
+Let's calculate the residual sum of squares (RSS):
+
+$\large L(y_i,f(x_i)) = (1.3 - (intercept + slope*0.45))^2 + (1 - (intercept + 1*0.40))^2 + (1.9 - (intercept + slope*0.85))^2 $
+
+To find the optimal values for the intercept and the slope, we take partial derivatives of the RSS with respect to slope and height:
+
+$\large \frac{\partial L}{\partial\ intercept} = -2(1.3 - (intercept + slope*0.45)) - 2(1 - (intercept + slope*0.40)) -2(1.9 - (intercept + slope*0.85))
+$
+
+$\large \frac{\partial L}{\partial\ slope} = -2*(-0.45)(1.3 - (intercept + slope*0.45)) - 2*(-0.40)(1 - (intercept + slope*0.40)) -2*(-0.85)(1.9 - (intercept + slope*0.85))$
+
+At this point, one might say to just set the derivatives to zero to find the optimal slope and intercept. However, there are some cases that we can't derive functions and set to zero. In either case, the gradient descent works just fine since it approaches the optimal slope and intercept to zero by taking small steps.
+
+Now, we guess some numbers for the intercept and the slope to calculate the RSS and its derivatives. Let's try slope 1 and intercept 0, just like our initial graph:
+
+$\large L(y_i,f(x_i)) = (1.3 - (0 + 1*0.45))^2 + (1 - (0 + 1*0.40))^2 + (1.9 - (0 + 1*0.85))^2 \approx 2.18$
+
+$\large \frac{\partial L}{\partial\ intercept_1} = -2(1.3 - (0 + 1*0.45)) - 2(1 - (0 + 1*0.40)) -2(1.9 - (0 + 1*0.85)) \approx  
+-3.95$
+
+$\large \frac{\partial L}{\partial\ slope_1} = 2*(-0.45)(1.3 - (0 + 1*0.45)) + 2*(-0.40)(1 - (0 + 1*0.40)) + 2*(-0.85)(1.9 - (0 + 1*0.85)) \approx - 3.03$
+
+We got a RSS of 2.18, and negatives slopes. Since our goal is to get slopes closer to zero (which would imply in a lower RSS), the gradient descent will calculate a new intercept and slope based on the results we got. We just need to calculate the step size for intercept and slope based on a learning rate (in this example, we set to 0.01), and then subtract the step size by the previous intercept:
+
+$step\ size_{intercept} = \frac{\partial L}{\partial\ intercept_1} * learning\ rate = -3.95 * 0.01 = -0.0395$
+
+$intercept_2 = intercept_1 - step\ size_{intercept} = 0 - (-0.0395) = 0.0395$
+
+$step\ size_{slope} = \frac{\partial L}{\partial\ slope_1} * learning\ rate = -3.03 * 0.01 = -0.0303$
+
+$slope_2 = slope_1 - step\ size_{slope} = 1 - (-0.0303) = 1.0303$
+
+Note: the higher the learning rate, the higher the step size becomes. Ideally, one would set a lower learning rate so that intercept and slope values increase gradually.
+
+With the new intercept and slope values, we calculate the loss function and the derivatives again:
+
+$\large L(y_i,f(x_i)) = (1.3 - (0.0395 + 1.0303*0.45))^2 + (1 - (0.0395 + 1.0303*0.40))^2 + (1.9 - (0.0395 + 1.0303*0.85))^2 \approx 1.90$
+
+$\large \frac{\partial L}{\partial\ intercept_2} = -2(1.3 - (0.0395 + 1.0303*0.45)) - 2(1 - (0.0395 + 1.0303*0.40)) -2(1.9 - (0.0395 + 1.0303*0.85)) \approx  
+-4.661$
+
+$\large \frac{\partial L}{\partial\ slope_2} = 2*(-0.45)(1.3 - (0.0395 + 1.0303*0.45)) + 2*(-0.40)(1 - (0.0395 + 1.0303*0.40)) + 2*(-0.85)(1.9 - (0.0395 + 1.0303*0.85)) \approx - 2.83$
+
+In this iteration, the gradient descent gave a step towards reducing the RSS. We would continue until we literally get step sizes closer to zero (if one continue iterating, the learning rate would reduce slope and intercept closer to zero).
+
+A problem that the Gradient Descent algorithm has is in the computational aspect of it. If a dataset has more than just weight and height as independent variables (say, eight) with thousands of data points, then the algorithm would have to calculate derivatives for every single independent variable with thousands of terms on each derivative. This is clearly expensive when it comes to computational time; and this is where the Stochastic Gradient Descent (SDG) comes into play. The SDG differs from the Gradient Descent by selecting random samples from the dataset (or picking small subsets of data) rather than using all data points to calculate the gradient descent. 
+
+The SDG is not a model by itself; it is rather a way of optimizing an existing model such as the Logistic Regression, Support Vector Machine, or the Linear Regression.
+
+According to scikit-learn API, the SDG has the following pros and cons: 
+
+**The Good**:
+
+- Overall efficient, especially if compared to traditional (Batch) Gradient Descent;
+- Implementation is straight-forward and many parameters can be tuned.
+
+**The Bad**:
+
+- SGD requires a number of hyperparameters such as the regularization parameter and the number of iterations;
+- SGD is sensitive to feature scaling;
+
+Additional sources to build intuition:
+
+- For scikit-learn documentation on the SDG algorithm, check [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html);
+- For building visual intuition, check [StatQuest by Josh Starmer](https://www.youtube.com/watch?v=vMh0zPT0tLI).
+
 ### 6. Random Forest Classifier
 ### 7. Balanced Random Forest Classifier
 ### 8. XGB Classifier
