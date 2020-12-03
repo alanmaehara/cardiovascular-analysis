@@ -620,7 +620,8 @@ From the table, the CatBoost Classifier, XGB Classifier, and LGBM Classifier are
 Before we proceed, let's explore each classifier and understand their mechanisms.
 
 ### 1. Random Guess (baseline)
-The first model is a baseline. We randomly choose predicted values and compared with the actual values. This is supposedly the worst model performer from our set of chosen models; therefore, if a particular model performs worse than the baseline, we would not use it as the chosen one.
+The first model is a baseline. We randomly choose predicted values and compared with the actual values. This is supposedly the worst model performer from our set of chosen models; therefore, if a particular model
+ performs worse than the baseline, we would not use it as the chosen one.
 
 
 ### 2. Logistic Regression
@@ -713,10 +714,155 @@ With the current parameters, the logistic model has a log-likelihood of -1.90. P
 
 In practice, logistic models can take more than one independent variable, which makes the model even more complex than the one we depicted here. 
 
-Good additional sources on the subject for building intuition is [Brandon Foltz's](https://www.youtube.com/watch?v=zAULhNrnuL4) series on Logistic Regression, and [Josh Starmer's](https://www.youtube.com/watch?v=vN5cNN2-HWE) videos on the topic.
+Let's summarize the good and bad aspects of the Logistic Regression classifier:
 
-### 3. K-Neighbors Classifier
+**The good:**
+- Like the linear regression, the logistic regression is a neat way to describe the effect of each independent variable on the target;
+- Algorithm implementation is simple and fast, training is efficient;
+- Overfitting can be avoided by using penalty techniques such as the L1 and L2.
+
+**The bad:**
+- Only works when the target variable is binary;
+- Assumes linearity between independent variables and the target;
+- Multicollinearity between independent variables is not permitted;
+- It doesn't model non-linear data well.
+
+Additional sources to build intuition:
+- [Brandon Foltz's](https://www.youtube.com/watch?v=zAULhNrnuL4) series on Logistic Regression
+- [Josh Starmer's](https://www.youtube.com/watch?v=vN5cNN2-HWE) videos on the topic
+- [Application in python - Sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html?highlight=logistic#sklearn.linear_model.LogisticRegression)
+
+### 3. K-Nearest Neighbors (KNN) Classifier
+
+The KNN Classifier is one of the simplest machine learning algorithms for classification. To classify an unknown data point to a certain class, it maps the K-nearest neighbors from that data point, analyze the labels of the K-data points selected, and the majority number of labels will determine the unknown data point label.
+
+For example: choosing K=3, we detect that 2 patients labeled as "with CVD" and 1 patient labeled as "without CVD" are the nearest 5 neighbors from the unlabeled (unknown) patient. As the majority of the neighbors are with CVD, the unknown patient will be labeled as with CVD.
+
+The following example uses only two features (height, weight) to plot the data points, but in practice this could be n-features.
+
+![](img/knn.PNG)
+
+For K = 5, we would have a different result:
+
+![](img/knn1.PNG)
+
+To calculate the K-nearest neighbors, we calculate the distance (in most cases, the euclidean distance) between the unlabeled point and each labeled point. The K neighbors with minimum distance value are the K-nearest neighbors.
+
+Now let's try to calculate the euclidean distance of the unlabeled point and all other labeled points. Suppose that we have the following dataset that resembles the graphs shown above:
+
+![](img/knn2.PNG)
+
+The Euclidean distance is defined as:
+
+$\large d(p,q) = \sqrt{\displaystyle\sum_{i=1}^{n}(p_{i}-q_{i})^2}$
+
+
+In the example given, we would do like this for just two features (weight and height: n = 2). Features are represented by the letter i:
+
+$\large d(p_{1},p_{2}) = \sqrt{\displaystyle\sum_{i=1}^{2}(p_{1i}-q_{2i})^2}$
+
+$\large d(p_{1},p_{2}) = \sqrt{(p_{1height} - p_{2height})^2 + (p_{1weight} - p_{2weight})^2}$
+
+$\large d(p_{1},p_{2}) = \sqrt{(1.5 - 1.4)^2 + (65 - 60)^2} \approx 5$
+
+Therefore, the euclidean distance between patient 1 and patient 2 is 5. To speed up to conclusion, distances between patient 1 and other patients are displayed below:
+
+![](img/knn3.PNG)
+
+If we picked K = 3, then we would choose patients 2, 3, and 4 as the 3-nearest neighbors to patient 1. Since patients 3 and 4 are with CVD, we would classify patient 1 as with CVD.
+
+The optimal K number is defined in a stochastical way, although an odd-numbered K is recommended if the number of classes are even.
+
+Let's summarize the good and bad aspects of the KNN classifier:
+
+**The good:**
+- No assumption on the data distribution is taken (non-parametric);
+- Lazy algorithm: training is fast, since it does computation only for the testing phase;
+- KNN usually performs fairly well when data has a small number of features
+- Effective for large training datasets;
+- Simple implementation.
+
+**The bad:**
+
+- Low values for k can generate noise and get affected by outliers;
+- High values for k are not optimal when data has a few samples;
+- Being a lazy learner algorithm means that the testing phase is slower;
+- Due to the curse of dimensionality, the algorithm performance can be negatively affected when there are many features in the dataset;
+- As K increases, so does computation cost.
+
+Additional sources to build intuition:
+
+- [KNN (K-Nearest Neighbors) #1 - Italo José (in Portuguese)](https://medium.com/brasil-ai/knn-k-nearest-neighbors-1-e140c82e9c4e)
+- [KNN Classification using Scikit-learn - Datacamp](https://medium.com/brasil-ai/knn-k-nearest-neighbors-1-e140c82e9c4e)
+- [Application in python - Sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
+
 ### 4. Naive Bayes
+
+The Naive Bayes classifier is a probabilistic classifier based on the [Bayes' theorem](https://en.wikipedia.org/wiki/Bayes%27_theorem) that has two main assumptions: (1) features are independent from each other; (2) all features have equal importance (equal weight) to explain the target variable.
+
+There are two main types of Naive Bayes classifiers: (1) the Multinomial Naive Bayes, which works best for categorical features; (2) the Gaussian Naive Bayes, which works for both categorical and numerical features under the assumption that all features belong to a normal (gaussian) distribution. To build intuition on the topic, we will focus on explaining the Multinomial Naive Bayes.
+
+First, imagine that we have eight patients with CVD and four patients without CVD, and one patient whose health condition is unknown and we want to calculate the probability of having CVD for that particular patient. Features we would consider are four: alcoholic consumption, obesity, diabetes, hypertension. All of them indicates presence/absence (yes/no).
+
+![](img/naive.PNG)
+
+Let's use Naive Bayes to predict the probability of this unlabeled patient (P1) of having CVD based on the information we know from the eight patients. The Naive Bayes formula is as follows:
+
+$\large P(y|X) = \Large\frac{P(X|y)P(y)}{P(X)}$
+
+in which we can translate as:
+
+$\large P(CVD|X) = \Large\frac{P(X|CVD)P(CVD)}{P(X)}$
+
+where,
+
+$X_i$ = all features of the dataset (hypertension, diabetes, obesity, alcohol);
+$P(CVD|X)$ = probability of a patient having CVD given the features X are true (also called posterior);
+$P(X|CVD)$ = probability of a patient having feature X given the patient has CVD;
+$P(X)$ = probability of feature X across the entire data (also known as the prior probability of X);
+$P(CVD)$ = probability of CVD across the entire data (also known as the prior probability of CVD);
+
+Let's start by calculating the conditional probabilities. To better calculate them, we summarize the table we saw earlier in confusion matrices per feature:
+
+![](img/naive1.PNG)
+
+Then, we calculate two probabilities: (1) the probability of patient 1 (P1) of having CVD given his own set of features; (2) the probability of patient 1 of not having CVD. Remember: patient 1 only has hypertension:
+
+$ P(CVD|X_{p1}) = \large\frac{P(Hypertension|CVD)P(NoDiabetes|CVD)P(NoObesity|CVD)P(NoAlcohol|CVD)P(CVD)}{P(X_{p1})}$
+
+$ P(NoCVD|X_{p1}) = \large\frac{P(Hypertension|NoCVD)P(NoDiabetes|NoCVD)P(NoObesity|NoCVD)P(NoAlcohol|NoCVD)P(NoCVD)}{P(X_{p1})}$
+
+Since the denominator term is equal for both, we can get rid of it. Then we get the following numbers:
+
+$ P(CVD|X_{p1}) = \large\frac{7}{8}*\frac{3}{8}*\frac{5}{8}*\frac{4}{8}*\frac{8}{12} \approx 0.068$
+
+$ P(NoCVD|X_{p1}) = \large\frac{2}{4}*\frac{3}{4}*\frac{3}{4}*\frac{2}{4}*\frac{4}{12} \approx 0.046$
+
+If one sums up both probabilities, they should be 1. Let's normalize them:
+
+$ P(CVD|X_{p1}) = \large\frac{0.068}{0.068 + 0.046} \approx 0.5964$
+
+$ P(NoCVD|X_{p1}) = \large\frac{0.046}{0.068 + 0.046} \approx 0.4035$
+
+Since the probability of patient 1 having CVD given his features X is higher than the probability of not having CVD, we classify patient 1 as having CVD.
+
+Let's summarize the good and bad aspects of the Naive Bayes Classifier:
+
+**The good:**
+- Very fast training compared to other classifiers;
+- Can be modeled with a small training dataset; 
+
+**The bad:**
+- Assumes that variables are independent from each other. Therefore, it is not a good algorithm if there are dependent features in the dataset;
+- Assumes that all variables have the same weight to determine the outcome;
+- If assumptions are not met, probability outputs are not reliable (hence the name "naive");
+- Testing phase: if a unknown class appears in the test dataset, a zero probability will be given. To avoid this, the Laplace estimation needs to be performed;
+
+Additional sources to build intuition:
+
+- For a similar example, check [geekforgeeks.org - Naive Bayes Classifiers](https://www.geeksforgeeks.org/naive-bayes-classifiers/);
+- For Gaussian Naive Bayes, check [StatQuest by Josh Starmer](https://www.youtube.com/watch?v=H3EjCKtlVog);
+
 ### 5. Stochastic Gradient Descent (SGD) Classifier
 ### 6. Random Forest Classifier
 ### 7. Balanced Random Forest Classifier
