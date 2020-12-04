@@ -962,7 +962,59 @@ Additional sources to build intuition:
 ### 6. Random Forest Classifier
 ### 7. Balanced Random Forest Classifier
 ### 8. XGB Classifier
-### 9. CatBoost Classifier
+### 9. Support Vector Machines (SVM)
+
+Support Vector Machines (SVM) are one of the most popular machine learning algorithms for classification and regression problems. The SVM tries to divide a sample space in a way that separates classes according to a maximum possible margin. 
+
+Let's say we are trying to fit two SVM lines (called Support Vector Classifier - SVC) to separate patients without CVD (negative, red) and with CVD (positive, green) as above:
+
+![](img/svm.PNG)
+
+Which SVC would be the best one to split the classes? If one sees the margin size on each graph (calculated according to the nearest patients to the SVM lines in both classes), one would conclude that the left-side SVM1 line separates classes better:
+
+![](img/svm1.PNG)
+
+In practice, the SVM algorithm handles calculation for us towards finding the line with the largest margin possible. This would ensure that our predictions are more reliable. For example, look at the graphs depicted below with a new patient added inside the margin:
+
+![](img/svm3.PNG)
+
+If one uses the SVC1 model to predict the health condition of this new patient, it would be labeled as positive (with CVD). It makes sense, since such patient has a weight that is closer to the cluster of patients with CVD. However, if one uses the SVM2 model, then the patient would be labeled as without CVD.
+
+How about non-linear data? How SVMs fit a SVC so that it can separate between classes? In this case, SVMs have something called **SVM kernels**, in which kernels transform a particular data to higher dimensions to facilitate the separation of classes. There are three types of kernels: linear, polynomial, and radial basis function. 
+
+For example, let's say that we have the following dataset:
+
+![](img/svm4.PNG)
+
+We then use a SVM's polynomial kernel that uses the y-axis (height) squared. The same graph would look like this:
+
+![](img/svm5.PNG)
+
+Although the best margin is quite short, the SVM could fit a SVC such that it distinguishes datapoints to distinct classes.
+
+The mathematical intuition is best build through [MIT's OpenCourseWare](https://www.youtube.com/watch?v=_PwhiWxHK8o) video, so we won't it here.
+
+According to Scikit-learn, the pros and cons of SVMs are:
+
+**The Good**:
+
+- Effective in high dimensional spaces;
+- Effective in cases where number of dimensions is greater than the number of samples;
+- Uses a subset of training points in the decision function (called support vectors), so it is also memory efficient;
+- Versatile: different Kernel functions can be specified for the decision function. Common kernels are provided, but it is also possible to specify custom kernels.
+
+
+**The Bad**:
+
+- The algorithm doesn't have a method that returns probabilities; it just display the predicted label;
+- If the number of features is much greater than the number of samples, avoid over-fitting in choosing Kernel functions and regularization term is crucial.
+- When data is non-linear, computation can get very expensive; in this case, use the Stochastic Gradient Descent as a method to optimize the SVM. 
+
+Additional sources:
+- For application in Python, check [Scikit-learn](https://scikit-learn.org/stable/modules/svm.html)
+- A second source for SVMs by [Rohith Gandhi](https://towardsdatascience.com/support-vector-machine-introduction-to-machine-learning-algorithms-934a444fca47).
+
+### 10. CatBoost Classifier
 
 
 &nbsp;
