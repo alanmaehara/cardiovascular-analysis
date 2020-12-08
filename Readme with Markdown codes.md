@@ -512,7 +512,8 @@ There are lots of metrics to measure a model's capability of predicting TPs and 
 
 ### Accuracy
 
-![](img/accuracy.PNG)
+$\large accuracy =  \frac{\# \ correct\ predictions}{\#\ predictions\ made} = \frac{TP + TN}{TP + TN + FP + FN} $
+
 
 **Accuracy is the number of correct predictions made divided by the total number of predictions made**, multiplied by 100 to turn it into a percentage.
 
@@ -531,19 +532,19 @@ This model has accurately predicted all positives, while it poorly predicted the
 
 If one uses the accuracy formula presented above, we would get:
 
-![](img/accuracy_1.PNG)
+$\large accuracy =  \frac{930}{1000} = 0.93 $
 
 An accuracy of 93% seems nice, but we know that the model didn't label non-sick patients accurately.
 
 ### Precision
 
-![](img/precision.PNG)
+$\large precision = \frac{TP}{TP + FP} $
 
 Precision measures **how well a model predict positive labels**. Precision is a good measure when the costs of False Positive (say, patients without CVD but diagnosed with CVD) is high.
 
 In the example we set, we would have a precision rate of:
 
-![](img/precision1.PNG)
+$\large precision = \frac{900}{900 + 70} = 0.92 $
 
 which basically says that the model has a 92% precision (or that the model predicted positive labels with an accuracy of 92%). 
 
@@ -551,23 +552,23 @@ In this project, we are dealing with a CVD detection challenge where the busines
 
 ### Recall
 
-![](img/recall.PNG)
+$\large recall = \frac{TP}{TP + FN} $
 
 Also known as sensitivity (or true positive rate), recall calculates **how many of the True Positives the model capture among all positives** in the dataset. Recall is a good measure when there is a high cost associated with False Negatives (in our case, patients with CVD but diagnosed without CVD).
 
 Applying the recall formula to our example:
 
-![](img/recall1.PNG)
+$\large recall = \frac{900}{900 + 0} = 1$
 
 As we expected, our model captures all true positives (100%).
 
 We can also calculate the inverse of recall, which is the **specificity**. It measures **how many of the True Negatives the model capture among all negatives**:
 
-![](img/specificity.PNG)
+$\large specificity = \frac{TN}{TN + FP} $
 
 Applying the specificity formula:
 
-![](img/specificity1.PNG)
+$\large specificity = \frac{30}{30 + 70} = 0.3 $
 
 which tells us that the model captures only 30% of all true negatives.
 
@@ -575,7 +576,7 @@ In this project, it will always be desirable to have diagnostics with a high rec
 
 ### F1-Score
 
-![](img/f1score.PNG)
+$\large F_{1} = 2* \frac{precision \ * \ recall}{precision \ + \ recall} $
 
 The F-measure or balanced F-score (F1 score) is the harmonic mean of precision and recall. **F1 Score is needed when you want to seek a balance between Precision and Recall.** 
 
@@ -585,11 +586,11 @@ For reasons already discussed in the precision and recall sections, we will use 
 
 A more reliable option to accuracy is the balanced accuracy. It is the average between the sensitivity (recall, or true positive rate) and specificity (the recall for negatives, or true negative rate):
 
-![](img/balanced.PNG)
+$\large balanced \ accuracy = \frac{sensitivity + specificity}{2}$
 
 In the case of sick patients, we would have the following result:
 
-![](img/balanced1.PNG)
+$\large balanced \ accuracy = \frac{1 + 0.3}{2} = 0.65 $
 
 which is a more reliable metric than the 93% of accuracy we obtained earlier.
 
@@ -624,7 +625,9 @@ With a 0.50 threshold, we have 2 patients who are sick, and 3 not sick. However,
 
 Now let's calculate the TPR and FPR for this specific threshold:
 
-![](img/tpr.PNG)
+$\large TPR/recall = \frac{TP}{TP + FN} = \frac{2}{2 + 1} = 0.66 $
+
+$\large FPR/ = 1 - specificity = 1 - \frac{TN}{TN + FP} = 1 - \frac{2}{2 + 0} = 0 $
 
 Then we plot the resulted values in the AUC-ROC plot:
 
@@ -662,29 +665,21 @@ In this example, we are comparing the XGB Classifier model and the Logistic Regr
 
 Credit: this AUC-ROC explanation was inspired by the amazing explanation made by [Josh Starmer from StatQuest.](https://www.youtube.com/watch?v=4jRBRDbJemM)
 
-References:
-- [Towards Data Science - Sarang Narkhede](https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5)
-- [Machine Learning Mastery](https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/).
+Other sources are: [Towards Data Science - Sarang Narkhede](https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5), [Machine Learning Mastery](https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/).
 
 ### Cohen-Kappa Score
 
 The Cohen-Kappa score is a measure of interrater reliability. The metric calculates the reliability of votes given by two raters (say, rater A and rater B), who have the task to vote whether a particular sample (or patient, in our case) is sick or not:
 
-![](img/kappascore.PNG)
+
+$\Large k = \frac{p_{o} - p_{e}}{1 - p_{e}}
+$
 
 where,
-![](img/kappascore1.PNG)
+$p_{o}$ = probability of agreement between raters
+$p_{e}$ = probability of agreement between raters when each rater assigns labels randomly
 
-Cohen-Kappa score values are always less than 1, being 1 equal to agreement between both raters about the decision made, and 0 equal to agreement by chance. If the score is less than 0, it means that the model is generating predictions that are worse than a model that randomly assign labels "sick" or "not sick" to patients (agreement by chance). Thresholds were defined by Landis and Koch (1977): 
-|Kappa value|Agreement level|
-|--|--|
-| < 0| agreement by chance|
-| 0–0.20| slight agreement|
-| 0.21–0.40| fair agreement|
-| 0.41–0.60| moderate agreement|
-| 0.61–0.80| substantial agreement|
-| 0.81–1 | almost perfect agreement|
-| 1 | perfect agreement |
+Cohen-Kappa score values are always less than 1, being 1 equal to agreement between both raters about the decision made, and 0 equal to agreement by chance. If the score is less than 0, it means that the model is generating predictions that are worse than a model that randomly assign labels "sick" or "not sick" to patients (agreement by chance).
 
 Let's set an example: 
 
@@ -698,7 +693,7 @@ In this example, we see a total of 10 votes where:
 
 To calculate the probability of agreement between raters (Po), we sum the total of agreements (diagonal line) divided by the total votes:
 
-![](img/kappascore2.PNG)
+$p_{o} = \frac{total\ of\ agreements}{total\ of\ votes} = \frac{7}{10} = 0.7$
 
 Now we calculate the probability of agreement between raters when each rater assigns labels randomly (Pe). To help us during calculation, an updated table with totals is displayed below:
 
@@ -711,27 +706,26 @@ To get this probability, we calculate the following:
 
 Then we sum both probabilities:
 
-![](img/kappascore3.PNG)
+$\large P_{e} = (\frac{6}{10} * \frac{7}{10}) + (\frac{4}{10} * \frac{3}{10}) = 0.42 + 0.12 = 0.54$
 
 Now we can proceed to calculate the Cohen-Kappa score:
 
-![](img/kappascore4.PNG)
+$\Large k = \frac{p_{o} - p_{e}}{1 - p_{e}} = \frac{0.7 - 0.54}{1 - 0.54} = \frac{0.16}{0.46} = 0.34
+$
 
-The Cohen-Kappa score of 0.34 means that, when two raters use a trained model to assign labels, they are in a fair agreement.
-
-References: 
-- [The Data Scientist](https://thedatascientist.com/performance-measures-cohens-kappa-statistic/)
-- [Towards Data Science - Boaz Shmueli](https://towardsdatascience.com/multi-class-metrics-made-simple-the-kappa-score-aka-cohens-kappa-coefficient-bdea137af09c)
+The Cohen-Kappa score of 0.34 means that, when two raters use a trained model to assign labels, they are 
+References: [The Data Scientist](https://thedatascientist.com/performance-measures-cohens-kappa-statistic/), [Towards Data Science - Boaz Shmueli](https://towardsdatascience.com/multi-class-metrics-made-simple-the-kappa-score-aka-cohens-kappa-coefficient-bdea137af09c)
 
 ### Brier Score Loss
 
 The Brier Score Loss (or Brier Score) measures the mean squared error between predicted probabilities of an outcome (say, patient has CVD) and the actual outcome. 
 
-![](img/brierscore.PNG)
+$\large Brier\ Score = \frac{1}{n}\displaystyle\sum_{i=1}^{n} (p_i - o_i)^2$
 
 where,
 
-![](img/brierscore1.PNG)
+$p_i$ = predicted probability that varies from 0 to 1
+$o_i$ = actual outcome (either 0 or 1)
 
 Given the nature of the formula, the brier score varies from 0(the best possible score) to 1 (the worst score). 
 
@@ -742,15 +736,12 @@ P2 = 0 (patient 2 has 0% chance of having CVD)
 
 Patient 1 is actually with a CVD, and patient 2 doesn't have CVD (the model was accurate). Translating it into the Brier Score formula, we have:
 
-![](img/brierscore2.PNG)
+$\large Brier\ Score = \frac{1}{2}[(0.95 - 1)^2 + (0.00 - 0)^2] = 0.00125$
 
 which is a very low Brier Score, showing that the model makes good predictions.
 
 It is worth mentioning that the Brier Score is an accuracy metric suitable for models predicting binary outcomes (yes/no, true/false, positive/negative). 
 
-References:
-
-- [Scikit-learn documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.brier_score_loss.html)
 
 ### II. Modeling 
 
@@ -785,45 +776,51 @@ Linear regression models have some similar fundamentals to logistic regression o
 
 **Formula for linear regression (with one independent variable X1):**
 
-![](img/lin.PNG)
+$\large\hat{y} = \beta_{0} + \beta_{1}X_1$
 
 where the $\beta$'s are the coefficients, the $\hat{y}$ is the predicted value, and the $X_1$ is the value of an independent variable (eg: if weight, it could assume values from 34 to 180 kg according to our data).
 
 **Formula for logistic regression (with one independent variable X1):**
 
-![](img/log.PNG)
+$\large\hat{y} = \ln(\frac{p}{1-p}) = \beta_{0} + \beta_{1}X_1$
 
 Notice that there is a natural log term that represents the predicted value. **This is the natural log of the odds** (also called log-odds), in which _p_ is the probability of an individual having CVD and _1-p_ is the probability of not having CVD.
 
 Why the natural log is utilized here? Let's take a look on the odds first. As an example, let's say that from 10 individuals weighting 80 kg, 8 have CVD and 2 doesn't. The probability of a patient to have CVD is 0.8 and the probability of not having CVD is 0.2. Then the odds of having CVD are:
 
-![](img/log1.PNG)
+$ odds\ of\ having\ CVD_1 = \large \frac{probability\ of\ having\ CVD_1}{probability\ of\ not\ having\ CVD_1} = \Large\frac{p}{1-p} = \frac{0.8}{0.2} = 4 $
 
 Then let's calculate the odds of having CVD for patients weighting 50kg: 2 have CVD and 8 doesn't:
 
-![](img/log2.PNG)
+$ odds\ of\ having\ CVD_2 = \large \frac{probability\ of\ having\ CVD_2}{probability\ of\ not\ having\ CVD_2} = \Large\frac{p}{1-p} = \frac{0.2}{0.8} = 0.25 $
 
 As one can tell, when the numerator is smaller than the denominator, odds range from 0 to 1. However, when the numerator is bigger than the denominator, odds range from 1 to infinity. This is the reason why logarithms are utilized in the logistic regression; **it is a measure to standardize output values across all probability values:**
 
-![](img/log3.PNG)
+$\large \ln(\frac{0.8}{0.2} )_1= 1.38$
+
+$\large \ln(\frac{0.2}{0.8} )_2= -1.38$
 
 With the natural log of the odds for these two specific cases on hands, we can figure out the probability of a patient with 50kg to have CVD and the probability of a patient with 80kg to have CVD. We do the following:
 
 - Exponentiate the log-odds:
 
-![](img/log4.PNG)
+$\Large\ln(\frac{p}{1-p}) = \beta_{0} + \beta_{1}X_1$
+
+$\Large\frac{p}{1-p} = e^{\beta_{0} + \beta_{1}X_1}$
 
 - Do some algebra towards isolating p:
 
-![](img/log5.PNG)
+$\large p = \displaystyle \frac{e^{\beta_{0} + \beta_{1}X_1}}{e^{\beta_{0} + \beta_{1}X_1}+ 1} = \displaystyle\frac{1}{1+e^{-(\beta_{0} + \beta_{1}X_1)}}$
 
 - We can translate the p as:
 
-![](img/log51.PNG)
+$\large p = \displaystyle\frac{1}{1+e^{-\ln(\frac{p}{p-1})}}$
 
 If we plug the numbers we got earlier in the formula:
 
-![](img/log6.PNG)
+$\large p_1 = \displaystyle\frac{1}{1+e^{-1.38}} = \frac{1}{1+0.25} = 0.80$
+
+$\large p_2 = \displaystyle\frac{1}{1+e^{1.38}} = \frac{1}{1+3.97} = 0.20$
 
 which tells us that the likelihood of a patient with 80kg having CVD is 80%, and the likelihood of a patient with 50kg having CVD is 20%. If we plot the probability predictions in the plot, we see that they are indeed part of a sigmoidal curve:
 
@@ -837,15 +834,15 @@ Now imagine that we got the following likelihoods of having CVD for patients wit
 
 - Log-likelihood of having CVD:
 
-![](img/log7.PNG)
+$\ln(0.70) + \ln(0.80) + \ln(0.90) + \ln(0.95) = (-0.35)+(-0.22)+(-0.10)+(-0.05) = -0.72$
 
 - Log-likelihood of not having CVD:
 
-![](img/log8.PNG)
+$\ln(1 - 0.10) + \ln(1 - 0.20) + \ln(1 - 0.30) + \ln(1 - 0.40) = (-0,10)+(-0.22)+(-0.35)+(-0,51) = -1.18$
 
 - Summing up both log-likelihood: 
 
-![](img/log9.PNG)
+$-0.72 - 1.18 = -1.90$
 
 With the current parameters, the logistic model has a log-likelihood of -1.90. Perhaps there are other parameters that could increase the log-likelihood value (the higher, the better), but this is a task that is efficiently done by any statistical software. 
 
@@ -891,11 +888,16 @@ Now let's try to calculate the euclidean distance of the unlabeled point and all
 
 The Euclidean distance is defined as:
 
-![](img/knn4.PNG)
+$\large d(p,q) = \sqrt{\displaystyle\sum_{i=1}^{n}(p_{i}-q_{i})^2}$
+
 
 In the example given, we would do like this for just two features (weight and height: n = 2). Features are represented by the letter i:
 
-![](img/knn5.PNG)
+$\large d(p_{1},p_{2}) = \sqrt{\displaystyle\sum_{i=1}^{2}(p_{1i}-q_{2i})^2}$
+
+$\large d(p_{1},p_{2}) = \sqrt{(p_{1height} - p_{2height})^2 + (p_{1weight} - p_{2weight})^2}$
+
+$\large d(p_{1},p_{2}) = \sqrt{(1.5 - 1.4)^2 + (65 - 60)^2} \approx 5$
 
 Therefore, the euclidean distance between patient 1 and patient 2 is 5. To speed up to conclusion, distances between patient 1 and other patients are displayed below:
 
@@ -940,15 +942,19 @@ First, imagine that we have eight patients with CVD and four patients without CV
 
 Let's use Naive Bayes to predict the probability of this unlabeled patient (P1) of having CVD based on the information we know from the eight patients. The Naive Bayes formula is as follows:
 
-![](img/nb.PNG)
+$\large P(y|X) = \Large\frac{P(X|y)P(y)}{P(X)}$
 
 in which we can translate as:
 
-![](img/nb1.PNG)
+$\large P(CVD|X) = \Large\frac{P(X|CVD)P(CVD)}{P(X)}$
 
 where,
 
-![](img/nb2.PNG)
+$X_i$ = all features of the dataset (hypertension, diabetes, obesity, alcohol);
+$P(CVD|X)$ = probability of a patient having CVD given the features X are true (also called posterior);
+$P(X|CVD)$ = probability of a patient having feature X given the patient has CVD;
+$P(X)$ = probability of feature X across the entire data (also known as the prior probability of X);
+$P(CVD)$ = probability of CVD across the entire data (also known as the prior probability of CVD);
 
 Let's start by calculating the conditional probabilities. To better calculate them, we summarize the table we saw earlier in confusion matrices per feature:
 
@@ -956,15 +962,21 @@ Let's start by calculating the conditional probabilities. To better calculate th
 
 Then, we calculate two probabilities: (1) the probability of patient 1 (P1) of having CVD given his own set of features; (2) the probability of patient 1 of not having CVD. Remember: patient 1 only has hypertension:
 
-![](img/nb3.PNG)
+$ P(CVD|X_{p1}) = \large\frac{P(Hypertension|CVD)P(NoDiabetes|CVD)P(NoObesity|CVD)P(NoAlcohol|CVD)P(CVD)}{P(X_{p1})}$
+
+$ P(NoCVD|X_{p1}) = \large\frac{P(Hypertension|NoCVD)P(NoDiabetes|NoCVD)P(NoObesity|NoCVD)P(NoAlcohol|NoCVD)P(NoCVD)}{P(X_{p1})}$
 
 Since the denominator term is equal for both, we can get rid of it. Then we get the following numbers:
 
-![](img/nb4.PNG)
+$ P(CVD|X_{p1}) = \large\frac{7}{8}*\frac{3}{8}*\frac{5}{8}*\frac{4}{8}*\frac{8}{12} \approx 0.068$
+
+$ P(NoCVD|X_{p1}) = \large\frac{2}{4}*\frac{3}{4}*\frac{3}{4}*\frac{2}{4}*\frac{4}{12} \approx 0.046$
 
 If one sums up both probabilities, they should be 1. Let's normalize them:
 
-![](img/nb5.PNG)
+$ P(CVD|X_{p1}) = \large\frac{0.068}{0.068 + 0.046} \approx 0.5964$
+
+$ P(NoCVD|X_{p1}) = \large\frac{0.046}{0.068 + 0.046} \approx 0.4035$
 
 Since the probability of patient 1 having CVD given his features X is higher than the probability of not having CVD, we classify patient 1 as having CVD.
 
@@ -1008,35 +1020,55 @@ But how can we reduce the errors? For Gradient Descent models, we set a loss fun
 
 The loss function can be any; in this example, we use the residual sum of the squares:
 
-![](img/sgd3.PNG)
+$\large L(y_i,f(x_i)) =  \displaystyle\sum_{i=1}^{3}(y_i - f(x_i))^2$
 
 where,
 
-![](img/sgd4.PNG)
+$y_i = observed\ height$ 
+$f(x_i) = intercept + slope*weight = predicted\ height $
 
 Let's calculate the residual sum of squares (RSS):
 
-![](img/sgd5.PNG)
+$\large L(y_i,f(x_i)) = (1.3 - (intercept + slope*0.45))^2 + (1 - (intercept + 1*0.40))^2 + (1.9 - (intercept + slope*0.85))^2 $
 
 To find the optimal values for the intercept and the slope, we take partial derivatives of the RSS with respect to slope and height:
 
-![](img/sgd6.PNG)
+$\large \frac{\partial L}{\partial\ intercept} = -2(1.3 - (intercept + slope*0.45)) - 2(1 - (intercept + slope*0.40)) -2(1.9 - (intercept + slope*0.85))
+$
+
+$\large \frac{\partial L}{\partial\ slope} = -2*(-0.45)(1.3 - (intercept + slope*0.45)) - 2*(-0.40)(1 - (intercept + slope*0.40)) -2*(-0.85)(1.9 - (intercept + slope*0.85))$
 
 At this point, one might say to just set the derivatives to zero to find the optimal slope and intercept. However, there are some cases that we can't derive functions and set to zero. In either case, the gradient descent works just fine since it approaches the optimal slope and intercept to zero by taking small steps.
 
 Now, we guess some numbers for the intercept and the slope to calculate the RSS and its derivatives. Let's try slope 1 and intercept 0, just like our initial graph:
 
-![](img/sgd7.PNG)
+$\large L(y_i,f(x_i)) = (1.3 - (0 + 1*0.45))^2 + (1 - (0 + 1*0.40))^2 + (1.9 - (0 + 1*0.85))^2 \approx 2.18$
+
+$\large \frac{\partial L}{\partial\ intercept_1} = -2(1.3 - (0 + 1*0.45)) - 2(1 - (0 + 1*0.40)) -2(1.9 - (0 + 1*0.85)) \approx  
+-3.95$
+
+$\large \frac{\partial L}{\partial\ slope_1} = 2*(-0.45)(1.3 - (0 + 1*0.45)) + 2*(-0.40)(1 - (0 + 1*0.40)) + 2*(-0.85)(1.9 - (0 + 1*0.85)) \approx - 3.03$
 
 We got a RSS of 2.18, and negatives slopes. Since our goal is to get slopes closer to zero (which would imply in a lower RSS), the gradient descent will calculate a new intercept and slope based on the results we got. We just need to calculate the step size for intercept and slope based on a learning rate (in this example, we set to 0.01), and then subtract the step size by the previous intercept:
 
-![](img/sgd8.PNG)
+$step\ size_{intercept} = \frac{\partial L}{\partial\ intercept_1} * learning\ rate = -3.95 * 0.01 = -0.0395$
+
+$intercept_2 = intercept_1 - step\ size_{intercept} = 0 - (-0.0395) = 0.0395$
+
+$step\ size_{slope} = \frac{\partial L}{\partial\ slope_1} * learning\ rate = -3.03 * 0.01 = -0.0303$
+
+$slope_2 = slope_1 - step\ size_{slope} = 1 - (-0.0303) = 1.0303$
 
 Note: the higher the learning rate, the higher the step size becomes. Ideally, one would set a lower learning rate so that intercept and slope values increase gradually.
 
 With the new intercept and slope values, we calculate the loss function and the derivatives again:
 
-![](img/sgd9.PNG)
+$\large L(y_i,f(x_i)) = (1.3 - (0.0395 + 1.0303*0.45))^2 + (1 - (0.0395 + 1.0303*0.40))^2 + (1.9 - (0.0395 + 1.0303*0.85))^2 \approx 1.90$
+
+$\large \frac{\partial L}{\partial\ intercept_2} = -2(1.3 - (0.0395 + 1.0303*0.45)) - 2(1 - (0.0395 + 1.0303*0.40)) -2(1.9 - (0.0395 + 1.0303*0.85)) \approx  
+-4.661$
+
+$\large \frac{\partial L}{\partial\ slope_2} = 2*(-0.45)(1.3 - (0.0395 + 1.0303*0.45)) + 2*(-0.40)(1 - (0.0395 + 1.0303*0.40)) + 2*(-0.85)(1.9 - (0.0395 + 1.0303*0.85)) \approx - 2.83$
 
 In this iteration, the gradient descent gave a step towards reducing the RSS. We would continue until we literally get step sizes closer to zero (if one continue iterating, the learning rate would reduce slope and intercept closer to zero).
 
