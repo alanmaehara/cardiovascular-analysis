@@ -959,10 +959,67 @@ Additional sources to build intuition:
 - For scikit-learn documentation on the SDG algorithm, check [here](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html);
 - For building visual intuition, check [StatQuest by Josh Starmer](https://www.youtube.com/watch?v=vMh0zPT0tLI).
 
-### 6. Random Forest Classifier
-### 7. Balanced Random Forest Classifier
-### 8. XGB Classifier
-### 9. Support Vector Machines (SVM)
+### 6. Random Forest and Balanced Random Forest
+
+Random forest for classification problems have a similar mechanism intuition to random forest for regression. I have derived proper explanations on decision trees (which is the basis for random forests) and the random forest algorithm itself in an sales prediction project located [here](https://github.com/alanmaehara/Sales-Prediction#decision-trees), so I will just highlight the main differences between random forests and balanced random forests.
+
+* **Balanced Random Forest vs Random Forest**
+
+The Balanced Random forest algorithm differs from traditional random forest by the fact that the former deals with imbalanced classes. For example, if the target variable of an dataset has a strong imbalance between classes, it would be preferrable to use a balancing technique before preprocessing the dataset - or train a model which handles imbalancing like the Balanced Random Forest.
+
+The algorithm is provided by [imbalanced-learn](https://imbalanced-learn.readthedocs.io/en/stable/generated/imblearn.ensemble.BalancedRandomForestClassifier.html) and the class we utilized for this project is the `BalancedRandomForestClassifier`. This specific algorithm randomly undersample the majority class till it gets to the same number of samples for the minority class. The technique used is bootstrapping, which is just a fancy name for randomly sample data points with replacement.
+
+
+Random Forest (in general) have the following pros and cons:
+
+**The Good**:
+
+- Usually performs well to most datasets;
+- Due to its random nature, it performs better than decision trees;
+- Intelligibility and easiness to interpret;
+- Default parameter values usually performs well, which makes implementation easier;
+- Like linear models, it selects the most predictive features to generate predictions and somehow serves as a feature selector method;
+
+**The Bad**:
+
+- Training is slow and parameter tuning is necessary to improve training times;
+
+Additional sources to build intuition:
+
+- For scikit-learn documentation, check [here](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html);
+
+### 7. XGB Classifier
+
+The XGB algorithm also works for both classification and regression problems. I have also written explanations [here](https://github.com/alanmaehara/Sales-Prediction#7-xgboost-regression) on the Gradient Boost algorithm (which is the basis for the XGB model along with random forests) and the XGB Regressor algorithm, which has similar ideas with the XGB Classifier. 
+
+As in gradient boosting, XGB models use the principle of ensemble learning for training. Ensemble learning focues on two things:
+
+- **Bagging**: a bootstrapping step (similar to what happens to random forests) where a sample of row (data points) and columns (features) are selected at random to grow a tree. This is an iterative procedure for n trees, where at the end of the procedure an average (for regression) or vote majority (for classification) is calculated among all n trees to reach a final prediction for an unlabeled data point. This is very useful to reduce variance across the model;
+- **Boosting**: as the model generates predictions, the boosting step works towards creating new models that reduce the errors of previous models in a sequential way. The method to reduce the errors comes from a mathematics problem: to minimize a [cost function](https://en.wikipedia.org/wiki/Loss_function) by using the [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent)
+
+The differences from Gradient Boosting and XGB model is computational: the XGB focuses on providing the gradient boosting a more optimized way (in terms of time and overfitting control) of training. More details can be found in the [documentation](https://xgboost.readthedocs.io/en/latest/).
+
+As usual, let's highlight the pros and cons of XGB:
+
+**The Good**:
+
+- The XGB has a built-in regularization parameter that lessen the effect of unimportant features during prediction. 
+- XGB also imposes a regularization on each tree's leaves, which helps reducing overfitting;
+- Tree Pruning: If necessary, XGB prune leaves (and even trees), which helps to avoid overfitting.
+- Computation Processing: XGB trains faster than gradient boosting and some other models due to its parallel processing
+- In-built Cross-Validation: the algorithm can handle cross-validation for each iteration, and use the optimum number of iterations according to prediction results;
+- It deals with missing values by default;
+
+**The Bad**:
+
+- Parameters are vast, and to unlock all the potential in XGBoost models, one might have to optimize parameters. A nice guide for parameters is [Aarshay Jain's](https://www.analyticsvidhya.com/blog/2016/03/complete-guide-parameter-tuning-xgboost-with-codes-python/) article on parameter tuning;
+
+Additional sources to build intuition:
+
+- For documentation, check [here](https://xgboost.readthedocs.io/en/latest/). It also contains detailed information on theory behing gradient boosting models and the XGB.
+
+
+### 8. Support Vector Machines (SVM)
 
 Support Vector Machines (SVM) are one of the most popular machine learning algorithms for classification and regression problems. The SVM tries to divide a sample space in a way that separates classes according to a maximum possible margin. 
 
@@ -1016,11 +1073,71 @@ Additional sources:
 
 ### 10. CatBoost Classifier
 
+In order to train machine learning classifiers, one is perhaps already used to the idea of encoding categorical variables that contains text (strings) to numerical values since most algorithms can't handle categorical variables in nature form. However, the CatBoost Classifier is an exception and its own name suggests what it does: "Category" and "Boosting".
 
-&nbsp;
+If one is seeking for an algorithm that not only deals with categorical variables in an excellent way, but also leverages all the benefits that a gradient boosting model has to offer, the CatBoost Classifier is certainly an attractive option. 
+
+**The Good**:
+
+- Similar performance with the most state-of-the-art machine learning algorithms;
+- Leverages all gradient boosting benefits;
+- Handle categorical data by using one-hot encoding;
+- Default parameters perform quite well.
+
+
+**The Bad**:
+
+- If compared to other "boosting" models, it can take more training time (see [Tal Peretz's](https://towardsdatascience.com/https-medium-com-talperetz24-mastering-the-new-generation-of-gradient-boosting-db04062a7ea2) performance when testing CatBoost vs XGBoost).
+- If categorical variables aren't present in the model, it might have a lower performance when compared to other boosting models.
+
+Additional sources:
+- For documentation and tutorials, check [here](https://catboost.ai/docs/concepts/tutorials.html)
+
+### 11. LightGBM (LGBM) Classifier
+
+The LightGBM (aka "Light Gradient Boosting Model") is also a gradient boosting-based algorithm with a focus on fast training times while improving accuracy rates. 
+
+In general, the main benefits from using the LGBM are:
+
+1. LGBM uses histograms to store continuous values into bins. This mean reduced calculating times for each node split on trees and less memory usage;
+2. While XGBoost and other decision tree-based algorithms grow trees by level (depth)-wise like this:
+
+![](img/lgbm.png)
+
+LGBM grows trees leaf-wise:
+
+![](img/lgbm1.png)
+
+which helps increasing accuracy, since it splits the leaf with the best potential to reduce loss (the difference between predicted and actual values).
+
+The LGBM has also some advantages over decision tree-based algorithms such as categorical feature optimization and parallel learning optimization. For more details, check the [LGBM documentation](https://lightgbm.readthedocs.io/en/latest/Features.html).
+
+**The Good**:
+
+According to the [documentation](https://lightgbm.readthedocs.io/en/latest/), the following advantages are observed when comparing the LGBM to other decision tree-based algorithms:
+- Faster training times and higher efficiency;
+- Low memory usage;
+- Better accuracy;
+- Support of parallel and GPU learning;
+- Capable of handling large-scale data;
+- Deals with unprocessed categorical variables.
+
+**The Bad**:
+
+- With a huge amount of data, some parameter tweaks might be necessary to start training.
+
+
+Additional sources:
+- A great comparison between CatBoost, XGB, and LGBM models by [Alvira Swalin](https://www.kdnuggets.com/2018/03/catboost-vs-light-gbm-vs-xgboost.html);
+- For documentation, check [here](https://lightgbm.readthedocs.io/en/latest/).
 
 ### III. Cross-Validation
 
+In this step, a cross-validation was performed on CatBoost Classifier, XGB Classifier, and LGBM Classifier using 10 folds. The training and validation data were combined together in this step and results are displayed below:
+
+![](img/cv.PNG)
+
+By a very short margin, the LGBM Classifier was the best performer with a F1-Score of 0.7250. Combined with the results we saw in the previous section, we will utilize the LGBM Classifier for this project.
 
 [back to top](#table-of-contents)
 
@@ -1029,25 +1146,33 @@ Additional sources:
 
 [(go to next section)](#07-business-performance)
 
-In this project, we will use the Random Search on the LGBM Classifier. The LGBM Classifier has the following parameters 
+In this project, we will use the Random Search method on the LGBM Classifier. The LGBM Classifier has the following parameters:
 
-1. `objective`: parameter that sets the learning method and the loss function. In our model, we set `objective='reg:squarederror'` which is a regression with squared loss
-2. `n_estimators`: number of trees
-3. `eta`: the learning rate. A lower eta makes our model more robust to overfitting thus, usually, the lower the learning rate, the best. But with a lower eta, we need more boosting rounds, which takes more time to train, sometimes for only marginal improvements.
-4. `max_depth`: maximum depth of a tree (or maximum number of nodes). Deeper trees can model more complex relationships by adding more nodes, but as we go deeper, splits become less relevant and are sometimes only due to noise, causing the model to overfit.
-5. `subsample`: ratio of training sample (example: 0.5 means that XGBoost will randomly sample half of training data before growing trees. It prevents overfitting)
-6. `colsample_bytree`: ratio from 0 to 1 representing the number of columns used by each tree.
-7. `min_child_weight`: is the minimum weight (or number of samples if all samples have a weight of 1) required in order to create a new node in the tree. A smaller `min_child_weight` allows the algorithm to create children that correspond to fewer samples, thus allowing for more complex trees, but again, more likely to overfit.
-
-We found out that the best set of parameters were:
-
-`param_tuned = {'n_estimators': 1500,'eta': 0.03,'max_depth': 9,'subsample': 0.7, 'colsample_bytree': 0.9 ,'min_child_weight':8}`
+1. `max_depth`: maximum depth of a tree (or maximum number of nodes). Deeper trees can model more complex relationships by adding more nodes, but as we go deeper, splits become less relevant and are sometimes only due to noise, causing the model to overfit. Tree still grows leaf-wise;
+2. `num_leaves`: max number of leaves in one tree;
+3. `min_data_in_leaf`: minimal number of data in one leaf. Can be used to deal with over-fitting;
+4. `learning_rate`: Also known as "eta". A lower eta makes our model more robust to overfitting thus, usually, the lower the learning rate, the best. But with a lower eta, we need more boosting rounds, which takes more time to train, sometimes for only marginal improvements;
+5. `colsample_bytree`: ratio from 0 to 1 representing the number of columns used by each tree. Can be used to speed up training and deal with overfitting with a low number; for example, if the chosen value is 0.90, the algorithm will select 90% of features at each tree node;
+6. `n_estimators`: number of boosting iterations;
+7. `min_child_weight`: is the minimum weight (or number of samples if all samples have a weight of 1) required in order to create a new node in the tree. A smaller `min_child_weight` allows the algorithm to create children that correspond to fewer samples, thus allowing for more complex trees, but again, more likely to overfit;
 
 Using the optimal set of parameters, we obtained the following results:
 
-![](img/xgb_tuned.png)
+![](img/xgb_tuned.PNG)
 
-which had a MAPE improvement of 5%.
+which had a recall improvement of ~15% at the expense of reducing precision by ~11%. With the model set, the last step is to test the model with unknown data (test data) and 
+
+* **Calibration**
+
+Some classification algorithms need some calibration 
+
+Since we are not using a model that doesn't need calibration (such as the logistic regression), we will calibrate both the tuned model and the default LGBM model.
+
+To interpret the calibration curve:
+- y-axis = actual probability of a positive event for a certain sample  
+- x-axis = predicted probability of a positive event for a certain sample   
+
+The closer the curve is to the perfectly calibrated line (45 degrees), the more calibrated the model is.
 
 [back to top](#table-of-contents)
 
@@ -1055,6 +1180,20 @@ which had a MAPE improvement of 5%.
 ## 07. Business Performance
 [(go to next section)](#conclusion)
 
+The model we chose generate CVD predictions **with precision between XX% and XX%.** Since there are more than 70,000 patients in the dataset, we can calculate the total profit obtained by the firm using the current solution (healthcare software), and also find out what would the total revenue be if the model we have just built were used instead.
+
+Important notes:
+- For each 5\% increase in precision rate above 50\%, **there is a \$500 increase for the patients' bill**;
+- For unitary percent increase, the patient's bill increase accordingly ($100);
+- The diagnosis cost is **\$1000 per patient**;
+- For the existing solution, the precision rate varies from **55% (worst scenario) and 65% (best scenario)**;
+- For the LGBM model, the precision rate varies from **75.03% (worst scenario) and %76.03 (best scenario)**
+
+For 70,000 patients, **the current operation would have a debt of ~\$35 million** if the precision rate is 55\%, **and would have a profit of ~\$35 million** if the precision rate is 65\%.
+
+**Under the model built in this project, the firm would never see a negative value**: with a precision rate of 75.03\%, **profit is around \\$105,2 million**; with an one percent increment (76.03), **profit would be \$112,2. million**. 
+
+Considering only the best scenario possible, **our model would increase revenues to the order of 68\%** compared with the current software solution. 
 
 [back to top](#table-of-contents)
 
