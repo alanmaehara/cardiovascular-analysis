@@ -7,7 +7,7 @@ _This project uses synthetic data from Kaggle that contains patient records acro
 In this project, we will explore a classic classification problem: **to predict whether a patient has cardiovascular disease or not based on 70,000 patient records.** A business situation will be set in order to guide our analysis throughout the project.
 
 This readme will contain the following points:
-1. How to tackle a classification problem of two labels;
+1. How to tackle a binary classification problem;
 2. Explore classification algorithms and understand their differences;
 3. A summary of the main insights obtained from the data from a business perspective;
 
@@ -15,8 +15,9 @@ This readme will contain the following points:
 
 ### How to read this README.MD?
 
-1. If you wish to **check the codes for this project**, access the Jupyter notebook [here](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-001.ipynb);
-2. A [(go to next section)]() hyperlink will be available for each section to make your reading smoother, and a [(skip theory)]() hyperlink will be there to skip technical explanations. 
+1. If you wish to **check the codes for this project**, access the Jupyter notebook [here](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb);
+2. If you wish to read the project's main findings instead of going through the entire project, look no further and [get there](#main-findings);
+3. A [(go to next section)]() hyperlink will be available for each section to make your reading smoother, and a [(skip theory)]() hyperlink will be there to skip technical explanations. 
 
 I would appreciate any comments or suggestions on how to improve this project. Please feel free to add me on GitHub or [Linkedin](https://www.linkedin.com/in/ammaehara/) - I will get back to you as soon as possible. 
 
@@ -25,6 +26,7 @@ With no further due, let's get started!
 ---
 ## Table of Contents
 - [A brief introduction to CVDs](#a-brief-introduction-to-cvds)
+- [Main Findings](#main-findings)
 - [01. The Business Problem and Deliverables](#01-the-business-problem-and-deliverables)
 - [02. Data Preparation and Feature Engineering](#02-data-preparation-and-feature-engineering)
 - [03. Exploratory Data Analysis (EDA)](#03-exploratory-data-analysis-eda)
@@ -32,12 +34,11 @@ With no further due, let's get started!
 - [05. Machine Learning Modeling](#05-machine-learning-modeling)
 - [06. Hyperparameter Tuning](#06-hyperparameter-tuning)
 - [07. Business Performance](#09-error-interpretation-and-business-performance)
-- [Conclusion](#conclusion)
 
 ---
 ## A brief introduction to CVDs
 
-[(go to next section)](#01-the-business-problem-and-deliverables)
+[(go to next section)](#main-findings)
 
 Before we jump to the business problem, a brief introduction to cardiovascular diseases (CVDs) is of help. According to [heart.org](https://www.heart.org/en/health-topics/consumer-healthcare/what-is-cardiovascular-disease), CVDs can refer to a number of conditions:
 
@@ -75,6 +76,15 @@ A useful chart from [ESC Guidelines 2013](https://slideplayer.com/slide/7436245/
 
 ![](img/classification.PNG)
 &nbsp;
+
+[back to top](#table-of-contents)
+
+---
+## Main Findings
+
+[(go to next section)](#01-the-business-problem-and-deliverables)
+
+
 
 [back to top](#table-of-contents)
 
@@ -1158,21 +1168,28 @@ In this project, we will use the Random Search method on the LGBM Classifier. Th
 
 Using the optimal set of parameters, we obtained the following results:
 
-![](img/xgb_tuned.PNG)
+![](img/lgbm_tuned.PNG)
 
-which had a recall improvement of ~15% at the expense of reducing precision by ~11%. With the model set, the last step is to test the model with unknown data (test data) and 
+Overall, we observe a 1% increase on F1-score after tuning. The recall drastically increased to ~7% at the cost of reducing the precision by 5%.
 
 * **Calibration**
 
-Some classification algorithms need some calibration 
+Some classification algorithms might be uncalibrated when generating probabilities of a specific label. For example, calibrated models that predict (for a certain number of patients) a probability of 20% of having CVD means that approximately 20% of such patients actually have CVD. When such numbers are too sparse, we have an uncalibrated model that needs calibration in order to predict more reliable results. To perform calibration, a regressor is utilized to map the probability outputs to the true probability; for more details, check documentation in [scikit-learn](https://scikit-learn.org/stable/modules/calibration.html#calibration).
 
-Since we are not using a model that doesn't need calibration (such as the logistic regression), we will calibrate both the tuned model and the default LGBM model.
+Some linear models such as the Logistic Regression already produce calibrated probabilities whereas some others don't. In this project, we analyzed whether calibration would be necessary for the LGBM model, so we compared the LGBM model performance before and after calibration procedure was held.
 
 To interpret the calibration curve:
-- y-axis = actual probability of a positive event for a certain sample  
-- x-axis = predicted probability of a positive event for a certain sample   
+- **y-axis** = actual probability of a positive event for a certain sample;  
+- **x-axis** = predicted probability of a positive event for a certain sample; 
+- The closer the curve is to the perfectly calibrated line (45 degrees), the more calibrated the model is:
 
-The closer the curve is to the perfectly calibrated line (45 degrees), the more calibrated the model is.
+![](img/lgbm_calibration.PNG)
+
+As we can observe, the tuned LGBM model presents a poor performance with probabilities around 0.40~0.60. The LGBM model with default parameters (in blue) is surprinsingly more stable, along with the tuned LGBM model with isotonic regressor. We ran a cross-validation with the two best performers (LGBM and the calibrated model)
+
+![](img/final_result.PNG)
+
+  Differences in F1-Scores are minimum. To keep things simple, we opted to use the LGBM model without tuned parameters and without calibration as the main model.
 
 [back to top](#table-of-contents)
 
@@ -1189,17 +1206,15 @@ Important notes:
 - For the existing solution, the precision rate varies from **55% (worst scenario) and 65% (best scenario)**;
 - For the LGBM model, the precision rate varies from **75.03% (worst scenario) and %76.03 (best scenario)**
 
-For 70,000 patients, **the current operation would have a debt of ~\$35 million** if the precision rate is 55\%, **and would have a profit of ~\$35 million** if the precision rate is 65\%.
+Total profit was:
 
-**Under the model built in this project, the firm would never see a negative value**: with a precision rate of 75.03\%, **profit is around \\$105,2 million**; with an one percent increment (76.03), **profit would be \$112,2. million**. 
+![](img/business.PNG)
 
-Considering only the best scenario possible, **our model would increase revenues to the order of 68\%** compared with the current software solution. 
+For 70,000 patients, **the current operation would have a debt of ~\$35 million** in the worst scenario, **and would have a profit of ~\$35 million** in the best scenario.
 
-[back to top](#table-of-contents)
+**Under the model built in this project, the firm would never see a negative value**: in the worst scenario, **profit is around \\$105,2 million**; in the best scenario, **profit would be \$112,2. million**. 
 
----
-
-
-## Conclusion
+Considering the best scenario possible, **our model would increase revenues to the order of 68\%** compared with the current software solution. 
 
 [back to top](#table-of-contents)
+
