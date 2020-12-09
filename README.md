@@ -16,7 +16,7 @@ This readme will contain the following points:
 ### How to read this README.MD?
 
 1. If you wish to **check the codes for this project**, access the Jupyter notebook [here](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb);
-2. If you wish to read the project's main findings instead of going through the entire project, look no further and [get there](#main-findings);
+2. If you wish to **read the project's main findings instead of going through the entire project**, look no further and [get there](#main-findings);
 3. A [(go to next section)]() hyperlink will be available for each section to make your reading smoother, and a [(skip theory)]() hyperlink will be there to skip technical explanations. 
 
 I would appreciate any comments or suggestions on how to improve this project. Please feel free to add me on GitHub or [Linkedin](https://www.linkedin.com/in/ammaehara/) - I will get back to you as soon as possible. 
@@ -33,7 +33,7 @@ With no further due, let's get started!
 - [04. Data Preprocessing and Feature Selection](#04-data-preprocessing-and-feature-selection)
 - [05. Machine Learning Modeling](#05-machine-learning-modeling)
 - [06. Hyperparameter Tuning](#06-hyperparameter-tuning)
-- [07. Business Performance](#09-error-interpretation-and-business-performance)
+- [07. Business Performance](#07-business-performance)
 
 ---
 ## A brief introduction to CVDs
@@ -83,6 +83,8 @@ A useful chart from [ESC Guidelines 2013](https://slideplayer.com/slide/7436245/
 ## Main Findings
 
 [(go to next section)](#01-the-business-problem-and-deliverables)
+
+**Note: if you plan to read the entire project, skip this section.**
 
 In this project, a classification model is built for a fictional healthcare business specialized in cardiovascular disease (CVD) detection called **Cardio Catch Diseases**. The goal is twofold: (1) to understand the main causes for the presence/absence of CVDs; (2) to increase and stabilize the current diagnosis' precision rate, which varies between 55% and 65% due to the diagnosis' complexity and operation inefficiencies.
 
@@ -269,7 +271,7 @@ A dataset of 70,000 past patients with information of all the variables shown in
 
 ---
 ## 02. Data Preparation and Feature Engineering
-[(go to next section)](#03-exploratory-data-analysis)
+[(go to next section)](#03-exploratory-data-analysis-eda)
 
 The dataset was split into training (67% of the entire data), test (20%), and validation data (13%). Data were split in the Data Preprocessing section for manipulation convenience. No missing values were found.
 
@@ -497,6 +499,7 @@ The term "accuracy" should be taken carefully, however. In classification, there
 For problems in which the target variable has two labels (yes/no, positive/negative), **a confusion matrix** helps us calculating these metrics:
 
 ![](img/confusion.png)
+
 _Image retrieved from [Towards Data Science.](https://towardsdatascience.com/understanding-confusion-matrix-a9ad42dcfd62)_
 
 On the top-side of the matrix, we have the actual values, and on the right side, we have the predicted values generated from the model. In the squares, there are four variables:
@@ -663,8 +666,8 @@ In this example, we are comparing the XGB Classifier model and the Logistic Regr
 Credit: this AUC-ROC explanation was inspired by the amazing explanation made by [Josh Starmer from StatQuest.](https://www.youtube.com/watch?v=4jRBRDbJemM)
 
 References:
-- [Towards Data Science - Sarang Narkhede](https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5)
-- [Machine Learning Mastery](https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/).
+- [Understanding AUC - ROC Curve, by Sarang Narkhede](https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5)
+- [How to Use ROC Curves and Precision-Recall Curves for Classification in Python, by Jason Brownlee](https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/).
 
 ### Cohen-Kappa Score
 
@@ -673,9 +676,11 @@ The Cohen-Kappa score is a measure of interrater reliability. The metric calcula
 ![](img/kappascore.PNG)
 
 where,
+
 ![](img/kappascore1.PNG)
 
 Cohen-Kappa score values are always less than 1, being 1 equal to an agreement between both raters about the decision made, and 0 equal to agreement by chance. If the score is less than 0, it means that the model is generating predictions that are worse than a model that randomly assign labels "sick" or "not sick" to patients (agreement by chance). Thresholds were defined by Landis and Koch (1977): 
+
 |Kappa value|Agreement level|
 |--|--|
 | < 0| agreement by chance|
@@ -720,8 +725,8 @@ Now we can proceed to calculate the Cohen-Kappa score:
 The Cohen-Kappa score of 0.34 means that, when two raters use a trained model to assign labels, they are in a fair agreement.
 
 References: 
-- [The Data Scientist](https://thedatascientist.com/performance-measures-cohens-kappa-statistic/)
-- [Towards Data Science - Boaz Shmueli](https://towardsdatascience.com/multi-class-metrics-made-simple-the-kappa-score-aka-cohens-kappa-coefficient-bdea137af09c)
+- [The Data Scientist - Performance Measures: Cohen’s Kappa statistic](https://thedatascientist.com/performance-measures-cohens-kappa-statistic/)
+- [Multi-Class Metrics Made Simple, Part III: the Kappa Score (aka Cohen’s Kappa Coefficient), by Boaz Shmueli](https://towardsdatascience.com/multi-class-metrics-made-simple-the-kappa-score-aka-cohens-kappa-coefficient-bdea137af09c)
 
 ### Brier Score Loss
 
@@ -750,7 +755,7 @@ It is worth mentioning that the Brier Score is an accuracy metric suitable for m
 
 References:
 
-- [Scikit-learn documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.brier_score_loss.html)
+- Application in python: [Scikit-learn's documentation](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.brier_score_loss.html).
 
 ### II. Modeling 
 
@@ -925,7 +930,7 @@ Let's summarize the good and bad aspects of the KNN classifier:
 Additional sources to build intuition:
 
 - [KNN (K-Nearest Neighbors) #1 - Italo José (in Portuguese)](https://medium.com/brasil-ai/knn-k-nearest-neighbors-1-e140c82e9c4e)
-- [KNN Classification using Scikit-learn - Datacamp](https://medium.com/brasil-ai/knn-k-nearest-neighbors-1-e140c82e9c4e)
+- [KNN Classification using Scikit-learn - Datacamp](https://www.datacamp.com/community/tutorials/k-nearest-neighbor-classification-scikit-learn)
 - [Application in python - Sklearn](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html)
 
 ### 4. Naive Bayes
@@ -1098,7 +1103,7 @@ The XGB algorithm also works for both classification and regression problems. I 
 As in gradient boosting, XGB models use the principle of ensemble learning for training. Ensemble learning focuses on two things:
 
 - **Bagging**: a bootstrapping step (similar to what happens to random forests) where a sample of row (data points) and columns (features) are selected at random to grow a tree. This is an iterative procedure for n trees, where at the end of the procedure an average (for regression) or vote majority (for classification) is calculated among all n trees to reach a final prediction for an unlabeled data point. This is very useful to reduce variance across the model;
-- **Boosting**: as the model generates predictions, the boosting step works towards creating new models that reduce the errors of previous models in a sequential way. The method to reduce the errors comes from a mathematics problem: to minimize a [cost function](https://en.wikipedia.org/wiki/Loss_function) by using the [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent)
+- **Boosting**: as the model generates predictions, the boosting step works towards creating new models that reduce the errors of previous models in a sequential way. The method to reduce the errors comes from a mathematics problem: to minimize a [cost function](https://en.wikipedia.org/wiki/Loss_function) by using the [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent).
 
 The difference between Gradient Boosting and XGB model is computational: the XGB focuses on providing the gradient boosting a more optimized way (in terms of time and overfitting control) of training. More details can be found in the [documentation](https://xgboost.readthedocs.io/en/latest/).
 
@@ -1152,7 +1157,7 @@ Then, we can use an SVM's polynomial kernel that uses the y-axis (height) square
 
 Although the best margin is quite short, the SVM could fit an SVC such that it distinguishes datapoints to distinct classes.
 
-The mathematical intuition is well covered by [MIT's OpenCourseWare](https://www.youtube.com/watch?v=_PwhiWxHK8o) video, so we won't it here.
+The mathematical intuition is well covered by [MIT's Profº Patrick Winston](https://www.youtube.com/watch?v=_PwhiWxHK8o), so we won't cover it here.
 
 According to Scikit-learn, the pros and cons of SVMs are:
 
@@ -1172,7 +1177,7 @@ According to Scikit-learn, the pros and cons of SVMs are:
 
 Additional sources:
 - For application in Python, check [Scikit-learn](https://scikit-learn.org/stable/modules/svm.html)
-- A second source for SVMs by [Rohith Gandhi](https://towardsdatascience.com/support-vector-machine-introduction-to-machine-learning-algorithms-934a444fca47).
+- [Support Vector Machine — Introduction to Machine Learning Algorithms](https://towardsdatascience.com/support-vector-machine-introduction-to-machine-learning-algorithms-934a444fca47) by Rohith Gandhi.
 
 ### 10. CatBoost Classifier
 
@@ -1190,11 +1195,11 @@ If one is seeking an algorithm that not only deals with categorical variables in
 
 **The Bad**:
 
-- If compared to other "boosting" models, it can take more training time (see [Tal Peretz's](https://towardsdatascience.com/https-medium-com-talperetz24-mastering-the-new-generation-of-gradient-boosting-db04062a7ea2) performance when testing CatBoost vs XGBoost).
+- If compared to other "boosting" models, it can take more training time (see [Tal Peretz's](https://towardsdatascience.com/https-medium-com-talperetz24-mastering-the-new-generation-of-gradient-boosting-db04062a7ea2) article; he does a performance check with CatBoost vs XGBoost).
 - If categorical variables aren't present in the model, it might have lower performance when compared to other boosting models.
 
 Additional sources:
-- For documentation and tutorials, check [here](https://catboost.ai/docs/concepts/tutorials.html)
+- For documentation and tutorials, check [Catboost's documentation](https://catboost.ai/docs/concepts/tutorials.html).
 
 ### 11. LightGBM (LGBM) Classifier
 
