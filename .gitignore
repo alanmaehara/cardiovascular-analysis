@@ -10,6 +10,11 @@
 */.ipynb_checkpoints/*
 data/
 catboost_info/
+cardiovascular-diseases-001.ipynb
+readme_markdown.md
+Template.ipynb
+requirements.txt
+cardiovascular-analysis/
 
 # IPython
 profile_default/
