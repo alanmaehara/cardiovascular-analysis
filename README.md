@@ -15,7 +15,7 @@ This readme will contain the following points:
 
 ### How to read this README.MD?
 
-1. If you wish to **check the codes for this project**, access the Jupyter notebook [here](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/notebook/cardiovascular-diseases-002.ipynb);
+1. If you wish to **check the codes for this project**, access the Jupyter notebook [here](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb);
 2. If you wish to **read the project's main findings instead of going through the entire project**, look no further and [get there](#main-findings);
 3. A [(go to next section)]() hyperlink will be available for each section to make your reading smoother, and a [(skip theory)]() hyperlink will be there to skip technical explanations. 
 
@@ -166,7 +166,7 @@ A summarized description of the project's dataset and some key findings are pres
   - Weak positive correlation with **BMI**, **cholesterol**, and **CVD Risk**. CVD Risk is a variable that measures CVD risk with a 0-10 scale, being zero equal to a low risk of having CVD and 10 otherwise; 
   - Zero or almost zero correlation with **gender**, **glucose**, **smoking**, **alcohol intake**, and **physical activity**. 
 
-According to the insights earned above, hypotheses were derived and tested. For more details on each hypothesis, check the [project's notebook](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/notebook/cardiovascular-diseases-002.ipynb):
+According to the insights earned above, hypotheses were derived and tested. For more details on each hypothesis, check the [project's notebook](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb):
 
 |Hypothesis|Verdict|
 |--|--|
@@ -283,7 +283,7 @@ The dataset was split into training (67% of the entire data), test (20%), and va
 
 #### Outlier Analysis
 
-Outliers for numerical variables were studied and removed accordingly (around 6.48% of the entire data). For more details on how the outliers were identified and removed, please access the [notebook.](http://localhost:8888/notebooks/notebook/cardiovascular-diseases-002.ipynb#2.8.-Outlier-Analysis)
+Outliers for numerical variables were studied and removed accordingly (around 6.48% of the entire data). For more details on how the outliers were identified and removed, please access the [notebook.](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb)
 
 In practice, one would consult the firm's business/medical team before removing outliers from the dataset. In this project, we made assumptions according to the medical literature as we identify outliers.
 
@@ -362,7 +362,7 @@ Highlights:
 &nbsp;
 ### II. Bivariate Analysis
 
-Twelve hypotheses were derived from the mindmap and were examined against the target variable. Here we highlight three main hypotheses - if you wish to check for the complete list of hypotheses, see the [notebook](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/notebook/cardiovascular-diseases-002.ipynb).
+Twelve hypotheses were derived from the mindmap and were examined against the target variable. Here we highlight three main hypotheses - if you wish to check for the complete list of hypotheses, see the [notebook](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/cardiovascular-diseases-002.ipynb).
 
 
 #### H4. The average height among patients with CVD and without CVD is different with a confidence interval of 95% 
