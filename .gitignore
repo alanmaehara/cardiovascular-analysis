@@ -8,14 +8,13 @@
 
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-data/
-catboost_info/
 cardiovascular-analysis/
-readme_markdown.md
-Template.ipynb
-requirements.txt
+catboost_info/
+data/
 readme/
 cardiovascular-diseases-002raw.ipynb
+Template.ipynb
+/cardiovascular-analysis/
 
 # IPython
 profile_default/
