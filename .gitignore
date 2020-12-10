@@ -11,13 +11,12 @@
 data/
 catboost_info/
 cardiovascular-analysis/
-/cardiovascular-analysis/
-cardiovascular-diseases-001.ipynb
 readme_markdown.md
 Template.ipynb
 requirements.txt
 readme/
-cardiovascular-analysis/
+cardiovascular-diseases-002raw.ipynb
+
 # IPython
 profile_default/
 ipython_config.py

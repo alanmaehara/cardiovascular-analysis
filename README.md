@@ -283,7 +283,7 @@ The dataset was split into training (67% of the entire data), test (20%), and va
 
 #### Outlier Analysis
 
-Outliers for numerical variables were studied and removed accordingly (around 6.48% of the entire data). For more details on how the outliers were identified and removed, please access the [notebook.](https://github.com/alanmaehara/cardiovascular-analysis/blob/master/notebook/cardiovascular-diseases-002.ipynb)
+Outliers for numerical variables were studied and removed accordingly (around 6.48% of the entire data). For more details on how the outliers were identified and removed, please access the [notebook.](http://localhost:8888/notebooks/notebook/cardiovascular-diseases-002.ipynb#2.8.-Outlier-Analysis)
 
 In practice, one would consult the firm's business/medical team before removing outliers from the dataset. In this project, we made assumptions according to the medical literature as we identify outliers.
 
