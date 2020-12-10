@@ -7,16 +7,14 @@
 # website: http://jupyter.org/
 
 cardiovascular-analysis/
+*/cardiovascular-analysis/*
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-cardiovascular-analysis/
 catboost_info/
 data/
 readme/
 cardiovascular-diseases-002raw.ipynb
 Template.ipynb
-/cardiovascular-analysis/
-cardiovascular-analysis/
 
 
 # IPython
