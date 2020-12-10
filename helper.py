@@ -36,36 +36,34 @@ class helper_functions(object):
     def __init__(self):
         pass
 
-
     def cramer_v(self, x, y):
-    '''Function that returns Cramér's V values from two variables x and y (arrays)'''
-    # 
-    cm = pd.crosstab(x, y)
-    # calculate chi-square chi2
-    chi2 = stats.chi2_contingency(cm)[0]
-    n = cm.sum().sum()
-    r, k = cm.shape
-    phi = chi2/n
-    phibiascorrect = max(0, phi - (k-1)*(r-1)/(n-1))
-    k_denominator = k - (k-1)**2 / (n-1)
-    r_denominator = r - (r-1)**2 / (n-1) 
-    denominator = min(k_denominator-1, r_denominator-1)
-    # return cramér's V values
-    return np.sqrt(phibiascorrect / denominator)
+        '''Function that returns Cramér's V values from two variables x and y (arrays)'''
+        # get contingency table
+        cm = pd.crosstab(x, y)
+        # calculate chi-square chi2
+        chi2 = stats.chi2_contingency(cm)[0]
+        n = cm.sum().sum()
+        r, k = cm.shape
+        phi = chi2/n
+        phibiascorrect = max(0, phi - (k-1)*(r-1)/(n-1))
+        k_denominator = k - (k-1)**2 / (n-1)
+        r_denominator = r - (r-1)**2 / (n-1) 
+        denominator = min(k_denominator-1, r_denominator-1)
+        # return cramér's V values
+        return np.sqrt(phibiascorrect / denominator)
 
-
-    def IQR(self, data):
+    def iqr(self, data):
         '''Calculate the lower and upper fence of a variable's boxplot'''
         # IQR weight
         Q1 = np.quantile(data, .25)
         Q3 = np.quantile(data, .75)
-        IQR = Q3 - Q1
+        interquartile = Q3 - Q1
 
         # calculate lower fence and using its value to eliminate outliers
-        upper_fence = Q3 + (1.5 * IQR)
-        lower_fence = Q1 - (1.5 * IQR)
+        upper_fence = Q3 + (1.5 * interquartile)
+        lower_fence = Q1 - (1.5 * interquartile)
         
-        return print('For variable {}, upper fence is {} and lower fence is {}.'.format(var, upper_fence, lower_fence))
+        return print('For variable {}, upper fence is {} and lower fence is {}.'.format(data.name, upper_fence, lower_fence))
 
 
     def get_descriptive_statistics(self, data):
@@ -104,7 +102,7 @@ class helper_functions(object):
 
 
     def feature_importance(self, n_rows, n_cols, X_train, y_train, X_valid, y_valid):
-          
+        '''Calculate feature importance from Logistic, Random Forest, CatBoost, XGB, LGBM'''  
         # train classifiers 
         lr = LogisticRegression(max_iter=100, random_state=42)
         lr.fit(X_train, y_train)
@@ -161,7 +159,7 @@ class helper_functions(object):
 
 
     def ml_metrics(self, model_name, y_valid, y_hat, df_prob):
-    '''Calculates the model performance and display metrics as a pandas dataframe.'''
+        '''Calculates the model performance and display metrics as a pandas dataframe.'''
         f1 = f1_score(y_valid, y_hat)
         accuracy = accuracy_score(y_valid, y_hat)
         kappa = cohen_kappa_score(y_valid, y_hat)
@@ -180,8 +178,8 @@ class helper_functions(object):
                             'Brier score': brier}, index = [0])
     
     def ml_performance(self, models, X_train, y_train, X_valid, y_valid, threshold, baseline):
-    '''Calculate model performance according to a list of 
-    provided classifiers, train, test dataset, and a probability threshold'''
+        '''Calculate model performance according to a list of 
+        provided classifiers, train, test dataset, and a probability threshold'''
         # create empty list to show results later on
         modeling_df = []
         for k, clf in enumerate(models):
@@ -242,6 +240,7 @@ class helper_functions(object):
         return final_df.sort_values('F1-Score', ascending = False)  
         
     def single_confusion_matrix(self, y_valid, y_pred, model, qualifier=""):
+        '''Generates a single confusion matrix'''
         # calculates confusion matrix
         cm = confusion_matrix(y_valid, y_pred)
 
@@ -256,7 +255,6 @@ class helper_functions(object):
 
     def multiple_confusion_matrices(self, n_rows, n_cols, X_train, y_train, X_valid, y_valid, models, threshold = 0.50):
         '''Print multiple confusion matrices'''
-        
         # define subplots
         fig, ax = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=(18, 16))
         
@@ -311,6 +309,7 @@ class helper_functions(object):
         
             # add metrics in an empty list
             cv_df.append(a1)
+
         # concatenate all classifier performances into a unique dataframe
         final_df = pd.concat(cv_df)
             
@@ -338,6 +337,7 @@ class helper_functions(object):
 
             # define CV strategy
             sk_fold = StratifiedKFold(n_splits=10, random_state=None)
+
             # calculate cross validation
             cv_scores = cross_val_score(model_random_search, X, y, cv = sk_fold, scoring='f1', n_jobs=-1)
 
@@ -423,6 +423,7 @@ class helper_functions(object):
                             'Kappa': cohen_kappa_score(y_test, y_pred),
                             'Brier Score': clf_score}, index = [0])
             df_scores.append(a1)
+            
         # concatenate all classifier performances into a unique dataframe
         df_final = pd.concat(df_scores)
         return df_final
