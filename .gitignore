@@ -9,11 +9,6 @@
 cardiovascular-analysis/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
-catboost_info/
-data/
-readme/
-cardiovascular-diseases-002raw.ipynb
-Template.ipynb
 
 
 # IPython
