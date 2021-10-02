@@ -621,7 +621,7 @@ Now we need to set a probability threshold to determine whether the patient is s
 
 ![](img/ROC5.PNG)
 
-With a 0.50 threshold, we have 2 patients who are sick, and 3 not sick. However, the model predicted two patients incorrectly. The confusion matrix shows the final outcome:
+With a 0.50 threshold, we have 2 patients who are sick, and 3 not sick. However, the model predicted one patient incorrectly. The confusion matrix shows the final outcome:
 
 ![](img/ROC6.PNG)
 
@@ -633,7 +633,7 @@ Then we plot the resulted values in the AUC-ROC plot:
 
 ![](img/ROC7.PNG)
 
-Okay, we got one point in our plot. Seems like the model with threshold 0.50 is very good in avoiding false negatives (FPR = 0), but not perfectly good in predicting true positives (TPR = 0.66).
+Okay, we got one point in our plot. Seems like the model with threshold 0.50 is very good in avoiding false positives (FPR = 0), but not perfectly good in predicting true positives (TPR = 0.66).
 
 So what if we try **different thresholds** other than 0.50? Say, 0.10, 0.20, 0.30.... 0.90? Then we would get new TPs, TNs, FPs, TNs, and new TPR and FPR values. At the end of the day, we would have many points in our graph:
 
